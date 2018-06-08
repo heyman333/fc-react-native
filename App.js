@@ -17,13 +17,12 @@ import {
   SafeAreaView
 } from "react-native"
 import { CheckBox } from "react-native-elements"
-import { all } from "rsvp"
 
 const COMPLETE = "COMPLETE"
 const ACTIVE = "ACTIVE"
 const ALL = "ALL"
-type Props = {}
-export default class App extends Component<Props> {
+
+export default class App extends Component {
   constructor(props) {
     super(props)
     this.allList = []
