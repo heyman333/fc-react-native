@@ -17,6 +17,7 @@ import {
   SafeAreaView
 } from "react-native"
 import { CheckBox } from "react-native-elements"
+import { all } from "rsvp"
 
 const COMPLETE = "COMPLETE"
 const ACTIVE = "ACTIVE"
@@ -32,6 +33,17 @@ export default class App extends Component<Props> {
       mode: ALL,
       text: ""
     }
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem("allList").then(allList => {
+      if (allList) {
+        this.allList = JSON.parse(allList)
+      } else {
+        this.allList = []
+      }
+      this.setState({ todoList: this.allList })
+    })
   }
 
   _showAll = () => {
@@ -66,6 +78,7 @@ export default class App extends Component<Props> {
     this.allList = this.allList.map((list, index) => Object.assign({}, list, { index }))
     this.setState({ text: "" })
     this._showByMode()
+    AsyncStorage.setItem("allList", JSON.stringify(this.allList))
   }
 
   _checkList = item => {
@@ -78,6 +91,7 @@ export default class App extends Component<Props> {
       this.allList[index].status = ACTIVE
       this._showByMode()
     }
+    AsyncStorage.setItem("allList", JSON.stringify(this.allList))
   }
 
   _delete = item => {
@@ -86,6 +100,7 @@ export default class App extends Component<Props> {
     this.allList.splice(index, 1)
     this.allList = this.allList.map((list, index) => Object.assign({}, list, { index }))
     this._showByMode()
+    AsyncStorage.setItem("allList", JSON.stringify(this.allList))
   }
 
   _renderItem = ({ item, index }) => {
@@ -95,6 +110,7 @@ export default class App extends Component<Props> {
         <CheckBox
           onPress={() => this._checkList(item)}
           checkedTitle={"완료"}
+          title={"미완료"}
           checkedIcon="dot-circle-o"
           uncheckedIcon="circle-o"
           checked={item.status === COMPLETE}
@@ -127,7 +143,7 @@ export default class App extends Component<Props> {
   }
 
   render() {
-    const { todoList, text } = this.state
+    const { todoList, text, mode } = this.state
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.textInputContainer}>
@@ -152,13 +168,22 @@ export default class App extends Component<Props> {
               paddingRight: 10
             }}
           >
-            <Text style={styles.textButton} onPress={this._showAll}>
+            <Text
+              style={[styles.textButton, { fontWeight: mode === ALL ? "600" : "300" }]}
+              onPress={this._showAll}
+            >
               All
             </Text>
-            <Text style={styles.textButton} onPress={this._showComplete}>
+            <Text
+              style={[styles.textButton, { fontWeight: mode === COMPLETE ? "600" : "300" }]}
+              onPress={this._showComplete}
+            >
               Complete
             </Text>
-            <Text style={styles.textButton} onPress={this._showActive}>
+            <Text
+              style={[styles.textButton, { fontWeight: mode === ACTIVE ? "600" : "300" }]}
+              onPress={this._showActive}
+            >
               Active
             </Text>
           </View>
@@ -194,7 +219,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 3,
-    backgroundColor: "skyblue"
+    backgroundColor: "rgba(49,49,49,0.5)"
   },
   addButton: {
     flex: 1,
