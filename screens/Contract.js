@@ -10,11 +10,14 @@ import {
   AsyncStorage,
   SafeAreaView,
   SectionList,
-  ActivityIndicator
+  ActivityIndicator,
+  Dimensions
 } from "react-native"
 import { CheckBox } from "react-native-elements"
 import ContactsList from "../contacts"
 import ResponsiveImage from "react-native-responsive-image"
+
+const { width, height } = Dimensions.get("window")
 
 export default class Contacts extends Component {
   static navigationOptions = {
@@ -79,7 +82,7 @@ export default class Contacts extends Component {
         />
         <View style={{ paddingLeft: 10 }}>
           <Text>Name: {`${item.name.first} ${item.name.last}`}</Text>
-          <Text>Email: {item.email}</Text>
+          <Text>E-mail: {item.email}</Text>
         </View>
       </View>
     )
@@ -106,8 +109,11 @@ export default class Contacts extends Component {
           renderItem={this.renderItem}
           ItemSeparatorComponent={this.renderSeperator}
           renderSectionHeader={this.renderSectionHeader}
+          keyExtractor={(item, index) => index.toString()}
+          ListEmptyComponent={() => (
+            <ActivityIndicator size="small" animating={true} style={{ height }} />
+          )}
         />
-        {/* <ActivityIndicator size="small" color="#00ff00" animating={true} /> */}
       </SafeAreaView>
     )
   }
@@ -131,5 +137,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center"
+  },
+  sectionHeaderText: {
+    fontFamily: "AppleSDGothicNeo-Regular",
+    fontSize: 20,
+    fontWeight: "normal",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "white",
+    paddingLeft: 10
   }
 })
