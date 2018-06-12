@@ -9,10 +9,12 @@ import {
   FlatList,
   AsyncStorage,
   SafeAreaView,
-  SectionList
+  SectionList,
+  ActivityIndicator
 } from "react-native"
 import { CheckBox } from "react-native-elements"
 import ContactsList from "../contacts"
+import ResponsiveImage from "react-native-responsive-image"
 
 export default class Contacts extends Component {
   static navigationOptions = {
@@ -21,43 +23,64 @@ export default class Contacts extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sections: this.generateSections()
+      sections: []
     }
   }
 
-  generateSections = () => {
-    return ContactsList.reduce((prev, item) => {
-      const index = prev.findIndex(({ title }) => title === item.author.charAt(0))
-      if (index >= 0) {
-        prev[index].data.push(item)
-      } else {
-        prev.push({
-          title: item.author.charAt(0),
-          data: [item]
-        })
-      }
+  componentDidMount() {
+    this._fetchData(1)
+  }
 
-      return prev
-    }, []).sort((a, b) => {
-      const nameA = a.category
-      const nameB = b.category
-      if (nameA < nameB) {
-        return -1
-      }
-      if (nameA > nameB) {
-        return 1
-      }
+  _fetchData = async page => {
+    const uri = "https://randomuser.me/api/"
+    const response = await fetch(`${uri}?page=${page}&results=${25}`)
+    const jsondata = await response.json()
+    console.log("datas", jsondata.results)
+    this._generateSections(jsondata.results)
+  }
 
-      // 이름이 같을 경우
-      return 0
-    })
+  _generateSections = results => {
+    const sections = results
+      .reduce((prev, item) => {
+        const index = prev.findIndex(({ title }) => title === item.name.first.charAt(0))
+        if (index >= 0) {
+          prev[index].data.push(item)
+        } else {
+          prev.push({
+            title: item.name.first.charAt(0),
+            data: [item]
+          })
+        }
+        return prev
+      }, [])
+      .sort((a, b) => {
+        const nameA = a.title
+        const nameB = b.title
+        if (nameA < nameB) {
+          return -1
+        }
+        if (nameA > nameB) {
+          return 1
+        }
+        // 이름이 같을 경우
+        return 0
+      })
+
+    this.setState({ sections })
   }
 
   renderItem = ({ item, index, section }) => {
     return (
       <View style={styles.item}>
-        <Text>Author: {item.author}</Text>
-        <Text>Filename: {item.filename}</Text>
+        <ResponsiveImage
+          source={{ uri: item.picture.thumbnail }}
+          style={{ width: 50, height: 50, borderRadius: 25 }}
+          borderRadius={25}
+        />
+        <View style={{ paddingLeft: 10 }}>
+          <Text>Name: {`${item.name.first} ${item.name.last}`}</Text>
+          <Text>Email: {item.email}</Text>
+        </View>
       </View>
     )
   }
@@ -76,7 +99,6 @@ export default class Contacts extends Component {
 
   render() {
     const { sections } = this.state
-    console.log(sections)
     return (
       <SafeAreaView style={styles.container}>
         <SectionList
@@ -85,6 +107,7 @@ export default class Contacts extends Component {
           ItemSeparatorComponent={this.renderSeperator}
           renderSectionHeader={this.renderSectionHeader}
         />
+        {/* <ActivityIndicator size="small" color="#00ff00" animating={true} /> */}
       </SafeAreaView>
     )
   }
@@ -93,5 +116,20 @@ export default class Contacts extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  seperator: {
+    backgroundColor: "black",
+    height: 2
+  },
+  sectionContainer: {
+    paddingVertical: 10,
+    paddingLeft: 10,
+    backgroundColor: "#63b295"
+  },
+  item: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center"
   }
 })
