@@ -3,9 +3,14 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native
 import { createStackNavigator } from "react-navigation"
 import Todo from "./screens/Todo"
 import Contract from "./screens/Contract"
+import Gallery from "./screens/Gallery"
 import uuid from "uuid"
 
-const LESSONS = [{ id: uuid(), title: "Todo" }, { id: uuid(), title: "Contract" }]
+const LESSONS = [
+  { id: uuid(), title: "Todo" },
+  { id: uuid(), title: "Contract" },
+  { id: uuid(), title: "Gallery" }
+]
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -44,6 +49,9 @@ export default createStackNavigator({
   },
   Contract: {
     screen: Contract
+  },
+  Gallery: {
+    screen: Gallery
   }
 })
 
