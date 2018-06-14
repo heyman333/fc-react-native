@@ -10,28 +10,35 @@ import {
   AsyncStorage,
   SafeAreaView,
   Image,
-  Dimensions
+  Dimensions,
+  Button
 } from "react-native"
 import { CheckBox } from "react-native-elements"
 
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window")
 
 export default class Gallery extends Component {
-  static navigationOptions = {
-    title: "Gallery"
+  static navigationOptions = ({ navigation }) => {
+    console.log("navigation", navigation)
+    return {
+      headerTitle: "Gallery",
+      headerRight: <Button onPress={navigation.getParam("editPhoto")} title="EDIT" />
+    }
   }
 
   constructor(props) {
     super(props)
     this.state = {
       photos: [],
-      refreshing: false
+      refreshing: false,
+      edit: false
     }
     this.count = 0
   }
 
   componentDidMount() {
     this._genArray(this.count)
+    this.props.navigation.setParams({ editPhoto: () => this.setState({ edit: true }) })
   }
 
   _genArray = index => {
