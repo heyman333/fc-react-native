@@ -19,10 +19,15 @@ const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window")
 
 export default class Gallery extends Component {
   static navigationOptions = ({ navigation }) => {
-    console.log("navigation", navigation)
+    const editStatus = navigation.getParam("editStatus")
     return {
       headerTitle: "Gallery",
-      headerRight: <Button onPress={navigation.getParam("editPhoto")} title="EDIT" />
+      headerRight: (
+        <Button
+          onPress={navigation.getParam("rightBtnFunc")}
+          title={editStatus == true ? "Delete" : "Edit"}
+        />
+      )
     }
   }
 
@@ -38,24 +43,48 @@ export default class Gallery extends Component {
 
   componentDidMount() {
     this._genArray(this.count)
-    this.props.navigation.setParams({ editPhoto: () => this.setState({ edit: true }) })
+    this.props.navigation.setParams({
+      rightBtnFunc: this._toggleEditMode,
+      editStatus: this.state.edit
+    })
+  }
+
+  _toggleEditMode = () => {
+    this.setState({ edit: !this.state.edit }, () =>
+      this.props.navigation.setParams({
+        editStatus: this.state.edit,
+        rightBtnFunc: this._deletePhotos
+      })
+    )
+  }
+
+  _deletePhotos = () => {
+    const { photos } = this.state
+    const newPhotos = photos.filter(photo => photo.rmChecked == false)
+
+    console.log("deleted", newPhotos)
+    this.setState({ photos: newPhotos, edit: !this.state.edit }, () =>
+      this.props.navigation.setParams({
+        rightBtnFunc: this._toggleEditMode,
+        editStatus: this.state.edit
+      })
+    )
   }
 
   _genArray = index => {
     //최대 200까지만
     if (index > 3) {
-      console.log("return")
       return
     }
-    console.log("genArr", index)
     const start = index * 50
     const end = (index + 1) * 50
     const { photos } = this.state
 
     const array = []
     for (let i = start; i < end; i++) {
-      array.push({ id: i })
+      array.push({ id: i, rmChecked: false })
     }
+    console.log("genArr", array)
 
     const newArr = photos.concat(array)
     this.setState({ photos: newArr })
@@ -64,24 +93,36 @@ export default class Gallery extends Component {
   _renderItems = ({ item, index }) => {
     const { edit } = this.state
     return (
-      <View>
+      <View style={{ padding: 1 }}>
         {edit && (
           <CheckBox
-            checked={this.state.checked}
+            checked={item.rmChecked}
             containerStyle={{
               position: "absolute",
               zIndex: 100,
               backgroundColor: "transparent",
               borderWidth: 0
             }}
+            onPress={() => this._checkRm(index)}
           />
         )}
         <Image
           source={{ uri: `https://unsplash.it/200/200?image=${item.id}` }}
-          style={{ width: deviceWidth / 3, height: deviceWidth / 3, zIndex: 0 }}
+          style={{ width: deviceWidth / 3 - 2, height: deviceWidth / 3, zIndex: 0 }}
         />
       </View>
     )
+  }
+
+  _checkRm = index => {
+    const { photos } = this.state
+    if (photos[index].rmChecked) {
+      photos[index].rmChecked = false
+    } else {
+      photos[index].rmChecked = true
+    }
+    console.log("checkPhotos", photos)
+    this.setState({ photos })
   }
 
   _refreshAlbum = () => {
@@ -100,14 +141,12 @@ export default class Gallery extends Component {
         return 0
       })
 
-    console.log("weightedArr", shuffleArray)
-
     this.setState({ photos: shuffleArray, refreshing: false })
   }
 
   render() {
     const { photos, refreshing } = this.state
-    console.log("photos", photos)
+
     return (
       <SafeAreaView style={styles.container}>
         <FlatList
