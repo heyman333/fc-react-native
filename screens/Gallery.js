@@ -62,12 +62,23 @@ export default class Gallery extends Component {
   }
 
   _renderItems = ({ item, index }) => {
-    console.log("inDraw", item, index)
+    const { edit } = this.state
     return (
       <View>
+        {edit && (
+          <CheckBox
+            checked={this.state.checked}
+            containerStyle={{
+              position: "absolute",
+              zIndex: 100,
+              backgroundColor: "transparent",
+              borderWidth: 0
+            }}
+          />
+        )}
         <Image
           source={{ uri: `https://unsplash.it/200/200?image=${item.id}` }}
-          style={{ width: deviceWidth / 3, height: 100 }}
+          style={{ width: deviceWidth / 3, height: deviceWidth / 3, zIndex: 0 }}
         />
       </View>
     )
