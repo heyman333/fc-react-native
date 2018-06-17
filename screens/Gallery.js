@@ -24,7 +24,7 @@ export default class Gallery extends Component {
       headerTitle: "Gallery",
       headerRight: (
         <Button
-          onPress={navigation.getParam("rightBtnFunc")}
+          onPress={navigation.getParam("rightBtnFunc", () => {})}
           title={editStatus == true ? "Delete" : "Edit"}
         />
       )
