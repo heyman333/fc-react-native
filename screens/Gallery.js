@@ -106,12 +106,18 @@ export default class Gallery extends Component {
             onPress={() => this._checkRm(index)}
           />
         )}
-        <Image
-          source={{ uri: `https://unsplash.it/200/200?image=${item.id}` }}
-          style={{ width: deviceWidth / 3 - 2, height: deviceWidth / 3, zIndex: 0 }}
-        />
+        <TouchableOpacity onPress={() => this._onPressPhoto(index)}>
+          <Image
+            source={{ uri: `https://unsplash.it/200/200?image=${item.id}` }}
+            style={{ width: deviceWidth / 3 - 2, height: deviceWidth / 3, zIndex: 0 }}
+          />
+        </TouchableOpacity>
       </View>
     )
+  }
+
+  _onPressPhoto = index => {
+    this.props.navigation.navigate("PhotoDetail", { index })
   }
 
   _checkRm = index => {

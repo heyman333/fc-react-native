@@ -1,9 +1,10 @@
 import React from "react"
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native"
-import { createStackNavigator } from "react-navigation"
+import { createStackNavigator, StackNavigator } from "react-navigation"
 import Todo from "./screens/Todo"
 import Contract from "./screens/Contract"
 import Gallery from "./screens/Gallery"
+import PhotoDetail from "./components/PhotoDetail"
 import uuid from "uuid"
 
 const LESSONS = [
@@ -40,7 +41,7 @@ class HomeScreen extends React.Component {
   }
 }
 
-export default createStackNavigator({
+const MainStack = StackNavigator({
   Home: {
     screen: HomeScreen
   },
@@ -54,6 +55,21 @@ export default createStackNavigator({
     screen: Gallery
   }
 })
+
+export default createStackNavigator(
+  {
+    Main: {
+      screen: MainStack
+    },
+    PhotoDetail: {
+      screen: PhotoDetail
+    }
+  },
+  {
+    mode: "modal",
+    headerMode: "none"
+  }
+)
 
 const styles = StyleSheet.create({
   tablerow: {
