@@ -4,13 +4,17 @@ import { createStackNavigator, StackNavigator } from "react-navigation"
 import Todo from "./screens/Todo"
 import Contract from "./screens/Contract"
 import Gallery from "./screens/Gallery"
+import CounterWithRedux from "./screens/CounterWithRedux"
 import PhotoDetail from "./components/PhotoDetail"
 import uuid from "uuid"
+import { Provider } from "react-redux"
+import store from "./store/configureStore"
 
 const LESSONS = [
   { id: uuid(), title: "Todo" },
   { id: uuid(), title: "Contract" },
-  { id: uuid(), title: "Gallery" }
+  { id: uuid(), title: "Gallery" },
+  { id: uuid(), title: "CounterWithRedux" }
 ]
 
 class HomeScreen extends React.Component {
@@ -22,24 +26,42 @@ class HomeScreen extends React.Component {
       onPress={() => this.props.navigation.navigate(item.title)}
       style={styles.tablerow}
     >
-      <Text>{item.title}</Text>
+      <Text style={styles.lessonText}>{item.title}</Text>
     </TouchableOpacity>
   )
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "white" }}>
         <FlatList
           style={{ flex: 1 }}
           data={LESSONS}
           keyExtractor={(item, index) => item.id}
           renderItem={this._renderItem}
-          ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: "black" }} />}
+          ItemSeparatorComponent={() => (
+            <View
+              style={{ height: 1, backgroundColor: "rgba(49,49,49,0.5)", marginHorizontal: 10 }}
+            />
+          )}
         />
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  tablerow: {
+    padding: 30
+  },
+  lessonText: {
+    fontSize: 18,
+    fontWeight: "normal",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "black"
+  }
+})
 
 const MainStack = StackNavigator({
   Home: {
@@ -53,10 +75,13 @@ const MainStack = StackNavigator({
   },
   Gallery: {
     screen: Gallery
+  },
+  CounterWithRedux: {
+    screen: CounterWithRedux
   }
 })
 
-export default createStackNavigator(
+const AppNavi = createStackNavigator(
   {
     Main: {
       screen: MainStack
@@ -71,8 +96,12 @@ export default createStackNavigator(
   }
 )
 
-const styles = StyleSheet.create({
-  tablerow: {
-    padding: 30
+export default class App extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <AppNavi />
+      </Provider>
+    )
   }
-})
+}
