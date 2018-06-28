@@ -5,6 +5,7 @@ import Todo from "./screens/Todo"
 import Contract from "./screens/Contract"
 import Gallery from "./screens/Gallery"
 import CounterWithRedux from "./screens/CounterWithRedux"
+import TodoWithRedux from "./screens/TodoWithRedux"
 import PhotoDetail from "./components/PhotoDetail"
 import uuid from "uuid"
 import { Provider } from "react-redux"
@@ -14,13 +15,15 @@ const LESSONS = [
   { id: uuid(), title: "Todo" },
   { id: uuid(), title: "Contract" },
   { id: uuid(), title: "Gallery" },
-  { id: uuid(), title: "CounterWithRedux" }
+  { id: uuid(), title: "CounterWithRedux" },
+  { id: uuid(), title: "TodoWithRedux" }
 ]
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
     title: "Home"
   }
+
   _renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => this.props.navigation.navigate(item.title)}
@@ -78,6 +81,9 @@ const MainStack = StackNavigator({
   },
   CounterWithRedux: {
     screen: CounterWithRedux
+  },
+  TodoWithRedux: {
+    screen: TodoWithRedux
   }
 })
 
