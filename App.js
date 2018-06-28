@@ -9,7 +9,8 @@ import TodoWithRedux from "./screens/TodoWithRedux"
 import PhotoDetail from "./components/PhotoDetail"
 import uuid from "uuid"
 import { Provider } from "react-redux"
-import store from "./store/configureStore"
+import configureStore from "./store/configureStore"
+import { PersistGate } from "redux-persist/integration/react"
 
 const LESSONS = [
   { id: uuid(), title: "Todo" },
@@ -102,11 +103,15 @@ const AppNavi = createStackNavigator(
   }
 )
 
+const { store, persistor } = configureStore()
+
 export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <AppNavi />
+        <PersistGate loading={null} persistor={persistor}>
+          <AppNavi />
+        </PersistGate>
       </Provider>
     )
   }
