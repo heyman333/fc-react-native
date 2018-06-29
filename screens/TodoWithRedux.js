@@ -9,11 +9,13 @@ import {
   FlatList,
   AsyncStorage,
   SafeAreaView,
-  Button
+  Button,
+  TouchableWithoutFeedback,
+  Alert
 } from "react-native"
 import { CheckBox } from "react-native-elements"
 import { connect } from "react-redux"
-import { toggleTodo, addTodo, setVisibilityFilter } from "../actions"
+import { toggleTodo, addTodo, setVisibilityFilter, removeTodo } from "../actions"
 import { VisibilityFilters } from "../actions/actionTypes"
 
 class TodoWithRedux extends Component {
@@ -40,20 +42,29 @@ class TodoWithRedux extends Component {
     this.props.toggleTodo(index)
   }
 
+  _onlongPress = id => {
+    Alert.alert("삭제", "해당 목록을 삭제 할까요?", [
+      { text: "네", onPress: () => this.props.removeTodo(id) },
+      { text: "아니오" }
+    ])
+  }
+
   _renderItems = ({ item, index }) => (
-    <View style={styles.row}>
-      <Text>{item.text}</Text>
-      <CheckBox
-        center
-        title="완료"
-        iconRight
-        checkedIcon="check"
-        uncheckedIcon="check"
-        checkedColor="red"
-        checked={item.completed}
-        onPress={() => this._toggleTodo(item.id)}
-      />
-    </View>
+    <TouchableWithoutFeedback onLongPress={() => this._onlongPress(item.id)}>
+      <View style={styles.row}>
+        <Text>{item.text}</Text>
+        <CheckBox
+          center
+          title="완료"
+          iconRight
+          checkedIcon="check"
+          uncheckedIcon="check"
+          checkedColor="red"
+          checked={item.completed}
+          onPress={() => this._toggleTodo(item.id)}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   )
 
   _setVisibility = filter => {
@@ -192,6 +203,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   toggleTodo: id => dispatch(toggleTodo(id)),
   addTodo: text => dispatch(addTodo(text)),
+  removeTodo: id => dispatch(removeTodo(id)),
   setVisibiityFilter: filter => dispatch(setVisibilityFilter(filter))
 })
 

@@ -21,6 +21,11 @@ export const addTodo = text => ({
   text
 })
 
+export const removeTodo = id => ({
+  type: types.REMOVETODO,
+  id
+})
+
 export const setVisibilityFilter = filter => ({
   type: types.SET_VISIBILITY_FILTER,
   filter
