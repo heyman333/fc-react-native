@@ -6,6 +6,7 @@ import Contract from "./screens/Contract"
 import Gallery from "./screens/Gallery"
 import CounterWithRedux from "./screens/CounterWithRedux"
 import TodoWithRedux from "./screens/TodoWithRedux"
+import Animation from "./screens/Animation"
 import PhotoDetail from "./components/PhotoDetail"
 import uuid from "uuid"
 import { Provider } from "react-redux"
@@ -17,7 +18,8 @@ const LESSONS = [
   { id: uuid(), title: "Contract" },
   { id: uuid(), title: "Gallery" },
   { id: uuid(), title: "CounterWithRedux" },
-  { id: uuid(), title: "TodoWithRedux" }
+  { id: uuid(), title: "TodoWithRedux" },
+  { id: uuid(), title: "Animation" }
 ]
 
 class HomeScreen extends React.Component {
@@ -85,6 +87,9 @@ const MainStack = StackNavigator({
   },
   TodoWithRedux: {
     screen: TodoWithRedux
+  },
+  Animation: {
+    screen: Animation
   }
 })
 
